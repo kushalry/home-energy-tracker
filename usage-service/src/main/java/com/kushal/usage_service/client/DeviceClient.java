@@ -1,6 +1,8 @@
 package com.kushal.usage_service.client;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -21,7 +23,7 @@ public class DeviceClient {
         this.baseUrl = baseUrl;
     }
 
-    public DeviceDto getDeviceById (Long deviceId) {
+    public DeviceDto getDeviceById(Long deviceId) {
         String url = UriComponentsBuilder
                 .fromUriString(baseUrl)
                 .path("/{deviceId}")
@@ -30,5 +32,17 @@ public class DeviceClient {
 
         ResponseEntity<DeviceDto> response = restTemplate.getForEntity(url, DeviceDto.class);
         return response.getBody();
+    }
+    
+    public List<DeviceDto> getAllDevicesForUser(Long userId) {
+        String url = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path("/user/{userId}")
+                .buildAndExpand(userId)
+                .toUriString();
+
+        ResponseEntity<DeviceDto[]> response = restTemplate.getForEntity(url, DeviceDto[].class);
+        DeviceDto[] devices = response.getBody();
+        return devices == null ? List.of() : List.of(devices);
     }
 }
