@@ -20,17 +20,16 @@ public class DeviceService {
 
     public DeviceDto getDeviceById(Long id) {
         Device device = deviceRepository.findById(id)
-                .orElseThrow(() ->
-                        new DeviceNotFoundException("Device not found with id " + id));
+                .orElseThrow(() -> new DeviceNotFoundException("Device not found with id " + id));
         return mapToDto(device);
     }
 
     public DeviceDto createDevice(DeviceDto input) {
         Device device = new Device();
-        device.setName(input.getName());
-        device.setType(input.getType());
-        device.setLocation(input.getLocation());
-        device.setUserId(input.getUserId());
+        device.setName(input.name());
+        device.setType(input.type());
+        device.setLocation(input.location());
+        device.setUserId(input.userId());
 
         final Device savedDevice = deviceRepository.save(device);
         return mapToDto(savedDevice);
@@ -38,13 +37,12 @@ public class DeviceService {
 
     public DeviceDto updateDevice(Long id, DeviceDto input) {
         Device existing = deviceRepository.findById(id)
-                .orElseThrow(() ->
-                        new DeviceNotFoundException("Device not found with id " + id));
+                .orElseThrow(() -> new DeviceNotFoundException("Device not found with id " + id));
 
-        existing.setName(input.getName());
-        existing.setType(input.getType());
-        existing.setLocation(input.getLocation());
-        existing.setUserId(input.getUserId());
+        existing.setName(input.name());
+        existing.setType(input.type());
+        existing.setLocation(input.location());
+        existing.setUserId(input.userId());
 
         final Device updatedDevice = deviceRepository.save(existing);
         return mapToDto(updatedDevice);
@@ -64,15 +62,15 @@ public class DeviceService {
                 .toList();
     }
 
-
     private DeviceDto mapToDto(Device device) {
-        DeviceDto dto = new DeviceDto();
-        dto.setId(device.getId());
-        dto.setName(device.getName());
-        dto.setType(device.getType());
-        dto.setLocation(device.getLocation());
-        dto.setUserId(device.getUserId());
-        return dto;
+        // Refactored to use the immutable Record Builder pattern
+        return DeviceDto.builder()
+                .id(device.getId())
+                .name(device.getName())
+                .type(device.getType())
+                .location(device.getLocation())
+                .userId(device.getUserId())
+                .build();
     }
 
 }
